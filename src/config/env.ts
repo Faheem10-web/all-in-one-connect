@@ -2,10 +2,10 @@ import { z } from "zod";
 
 const envSchema = z.object({
   // Database Configuration
-  DATABASE_URL: z.string().min(1, "DATABASE_URL environment variable is required"),
+  MONGODB_URI: z.string().min(1, "MONGODB_URI environment variable is required"),
 
   // NextAuth Session Config
-  NEXTAUTH_SECRET: z.string().min(1, "NEXTAUTH_SECRET environment variable is required"),
+  AUTH_SECRET: z.string().min(1, "AUTH_SECRET environment variable is required"),
   AUTH_TRUST_HOST: z.string().default("true"),
 
   // Google OAuth Credentials
@@ -29,8 +29,8 @@ const envSchema = z.object({
 
 const getEnv = () => {
   const result = envSchema.safeParse({
-    DATABASE_URL: process.env.DATABASE_URL,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    MONGODB_URI: process.env.MONGODB_URI,
+    AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
