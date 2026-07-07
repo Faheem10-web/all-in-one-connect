@@ -64,4 +64,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    ...authConfig.callbacks,
+    async jwt({ token, user }) {
+      if (user) {
+        await connectToDatabase();
+        const dbUser = await User.findOne({ email: user.email?.toLowerCase() });
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.role = dbUser.role;
+        } else {
+          token.id = user.id;
+          token.role = user.role || "BUSINESS_OWNER";
+        }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.role = token.role as string;
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+  },
 });
