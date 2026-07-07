@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+coverage
+build
+dist
+.env*
+*.local
+package-lock.json
+public/assets
