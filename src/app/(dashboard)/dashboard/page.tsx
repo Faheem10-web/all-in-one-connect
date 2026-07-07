@@ -17,6 +17,7 @@ import {
   History,
   TrendingUp,
 } from "lucide-react";
+import { getSessionUserId } from "@/utils/session";
 import { CreateBusinessForm } from "@/components/dashboard/create-business-form";
 
 export default async function DashboardPage() {
@@ -28,20 +29,20 @@ export default async function DashboardPage() {
 
   await connectToDatabase();
 
+  const userId = await getSessionUserId(session);
+
   // 1. Fetch businesses owned by this user
   const businesses = await Business.find({
-    userId: session.user.id,
+    userId,
     isDeleted: { $ne: true },
   });
 
   // 2. Fetch recent activity logs
-  const activityLogs = await ActivityLog.find({ userId: session.user.id })
-    .sort({ createdAt: -1 })
-    .limit(5);
+  const activityLogs = await ActivityLog.find({ userId }).sort({ createdAt: -1 }).limit(5);
 
   // 3. Fetch latest unread notifications
   const notifications = await Notification.find({
-    userId: session.user.id,
+    userId,
     readStatus: false,
   })
     .sort({ createdAt: -1 })

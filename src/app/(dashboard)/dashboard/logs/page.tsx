@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { connectToDatabase } from "@/lib/db";
 import ActivityLog from "@/lib/models/activity-log";
+import { getSessionUserId } from "@/utils/session";
 import { History } from "lucide-react";
 
 export default async function LogsPage() {
@@ -13,8 +14,10 @@ export default async function LogsPage() {
 
   await connectToDatabase();
 
+  const userId = await getSessionUserId(session);
+
   const logs = await ActivityLog.find({
-    userId: session.user.id,
+    userId,
   }).sort({ createdAt: -1 });
 
   return (

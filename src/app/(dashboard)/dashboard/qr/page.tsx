@@ -4,6 +4,7 @@ import { connectToDatabase } from "@/lib/db";
 import Business from "@/lib/models/business";
 import QRCode from "@/lib/models/qrcode";
 import { QRManager } from "@/components/dashboard/qr-manager";
+import { getSessionUserId } from "@/utils/session";
 import React from "react";
 
 export default async function QRPage() {
@@ -15,8 +16,10 @@ export default async function QRPage() {
 
   await connectToDatabase();
 
+  const userId = await getSessionUserId(session);
+
   const business = await Business.findOne({
-    userId: session.user.id,
+    userId,
     isDeleted: { $ne: true },
   });
 

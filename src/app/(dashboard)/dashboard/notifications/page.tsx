@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { connectToDatabase } from "@/lib/db";
 import Notification from "@/lib/models/notification";
 import { NotificationsList } from "@/components/dashboard/notifications-list";
+import { getSessionUserId } from "@/utils/session";
 import React from "react";
 
 export default async function NotificationsPage() {
@@ -14,8 +15,10 @@ export default async function NotificationsPage() {
 
   await connectToDatabase();
 
+  const userId = await getSessionUserId(session);
+
   const notifications = await Notification.find({
-    userId: session.user.id,
+    userId,
   }).sort({ createdAt: -1 });
 
   // Serialize notifications array

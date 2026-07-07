@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { connectToDatabase } from "@/lib/db";
 import Business from "@/lib/models/business";
 import GalleryItem from "@/lib/models/gallery";
+import { getSessionUserId } from "@/utils/session";
 import { GalleryForm } from "@/components/dashboard/gallery-form";
 import React from "react";
 
@@ -15,8 +16,10 @@ export default async function GalleryPage() {
 
   await connectToDatabase();
 
+  const userId = await getSessionUserId(session);
+
   const business = await Business.findOne({
-    userId: session.user.id,
+    userId,
     isDeleted: { $ne: true },
   });
 
