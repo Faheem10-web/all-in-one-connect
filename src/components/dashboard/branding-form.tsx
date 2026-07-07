@@ -84,9 +84,9 @@ export function BrandingForm({ businessId, logoUrl, coverUrl, branding }: Brandi
     const file = e.target.files?.[0];
     if (!file || !uploadTarget) return;
 
-    // Validate size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Selected image exceeds 5MB size limit.");
+    // Validate size (40MB limit)
+    if (file.size > 40 * 1024 * 1024) {
+      alert("Selected image exceeds 40MB size limit.");
       return;
     }
 

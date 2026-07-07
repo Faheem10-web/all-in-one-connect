@@ -5,6 +5,7 @@ import QRCodeLib from "qrcode";
 import { updateQRStyle } from "@/features/qr/actions";
 import { Download, Printer, Loader2, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/utils/url";
 
 interface QRManagerProps {
   businessId: string;
@@ -30,7 +31,7 @@ export function QRManager({ businessId, qrCode, businessSlug }: QRManagerProps) 
   const [eyeStyle, setEyeStyle] = useState(qrCode.style.eyeStyle);
 
   // Redirection URL target pointer
-  const redirectUrl = `http://localhost:3000/api/v1/qr/${qrCode.shortUrl}`;
+  const redirectUrl = `${BASE_URL}/api/v1/qr/${qrCode.shortUrl}`;
 
   // Redraw QR code on canvas when style settings change
   useEffect(() => {

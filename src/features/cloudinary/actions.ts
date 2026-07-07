@@ -8,8 +8,8 @@ import ActivityLog from "@/lib/models/activity-log";
 import { uploadToCloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
 import mongoose from "mongoose";
 
-// Maximum image upload size: 5MB
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+// Maximum image upload size: 40MB
+const MAX_FILE_SIZE = 40 * 1024 * 1024;
 // Supported mime-type headers
 const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
@@ -65,7 +65,7 @@ export async function uploadBusinessImage(
     const stringLength = base64Data.length - base64Data.indexOf(",") - 1;
     const sizeInBytes = Math.ceil(stringLength * 0.75);
     if (sizeInBytes > MAX_FILE_SIZE) {
-      return { success: false, message: "Image file exceeds maximum limit of 5MB." };
+      return { success: false, message: "Image file exceeds maximum limit of 40MB." };
     }
 
     // 2. Determine Folder Structure

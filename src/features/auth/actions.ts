@@ -7,6 +7,7 @@ import { connectToDatabase } from "@/lib/db";
 import User from "@/lib/models/user";
 import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
+import { BASE_URL } from "@/utils/url";
 
 const RegisterSchema = z
   .object({
@@ -98,7 +99,7 @@ export async function registerUser(prevState: unknown, formData: FormData) {
 
     // In production with SMTP, log the verification link for developer convenience
     console.log(
-      `[DEV] Verification Link: ${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify-email?token=${verificationToken}`,
+      `[DEV] Verification Link: ${BASE_URL}/verify-email?token=${verificationToken}`,
     );
 
     return {
@@ -209,7 +210,7 @@ export async function forgotPassword(prevState: unknown, formData: FormData) {
 
     // Log the link in terminal for developers to test
     console.log(
-      `[DEVELOPER MODE] Reset Password Link: http://localhost:3000/reset-password?token=${resetToken}`,
+      `[DEVELOPER MODE] Reset Password Link: ${BASE_URL}/reset-password?token=${resetToken}`,
     );
 
     return {

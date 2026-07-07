@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BASE_URL } from "@/utils/url";
 
 const envSchema = z.object({
   // Database Configuration
@@ -24,7 +25,7 @@ const envSchema = z.object({
   SMTP_PASSWORD: z.string().optional(),
 
   // General Host Target
-  NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
+  NEXT_PUBLIC_APP_URL: z.string().url().default(BASE_URL),
 });
 
 export type EnvType = z.infer<typeof envSchema>;
@@ -51,7 +52,7 @@ const getEnv = () => {
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASSWORD: process.env.SMTP_PASSWORD,
     NEXT_PUBLIC_APP_URL:
-      process.env.NEXT_PUBLIC_APP_URL || formattedVercelUrl || "http://localhost:3000",
+      process.env.NEXT_PUBLIC_APP_URL || formattedVercelUrl || BASE_URL,
   });
 
   if (!result.success) {
@@ -75,7 +76,7 @@ const getEnv = () => {
       SMTP_USER: process.env.SMTP_USER,
       SMTP_PASSWORD: process.env.SMTP_PASSWORD,
       NEXT_PUBLIC_APP_URL:
-        process.env.NEXT_PUBLIC_APP_URL || formattedVercelUrl || "http://localhost:3000",
+        process.env.NEXT_PUBLIC_APP_URL || formattedVercelUrl || BASE_URL,
     } as EnvType;
   }
 

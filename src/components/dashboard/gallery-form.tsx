@@ -34,9 +34,9 @@ export function GalleryForm({ businessId, initialItems }: GalleryFormProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size client-side (under 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Selected file exceeds the maximum 5MB size limit.");
+    // Validate size client-side (under 40MB)
+    if (file.size > 40 * 1024 * 1024) {
+      alert("Selected file exceeds the maximum 40MB size limit.");
       return;
     }
 
