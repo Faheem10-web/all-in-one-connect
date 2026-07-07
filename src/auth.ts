@@ -51,6 +51,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
+        // In dev mode (no real SMTP configured), skip email verification check
+        const smtpConfigured =
+          process.env.SMTP_USER && process.env.SMTP_USER !== "smtp-username";
+        if (smtpConfigured && !user.isVerified) {
+          console.warn(`[AUTH] Login blocked — email not verified: ${email}`);
+          return null;
+        }
+
         const passwordsMatch = await argon2.verify(user.passwordHash, password);
         if (passwordsMatch) {
           return {

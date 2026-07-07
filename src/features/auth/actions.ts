@@ -75,29 +75,44 @@ export async function registerUser(prevState: unknown, formData: FormData) {
     // Generate email verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
+    // Auto-verify in development when SMTP is not configured
+    const smtpConfigured =
+      process.env.SMTP_USER && process.env.SMTP_USER !== "smtp-username";
+    const isVerified = !smtpConfigured;
+
     // Create user with default role BUSINESS_OWNER
     await User.create({
       email: email.toLowerCase(),
       passwordHash,
       role: "BUSINESS_OWNER",
-      isVerified: false,
-      verificationToken,
+      isVerified,
+      verificationToken: isVerified ? null : verificationToken,
     });
 
-    // Console log the verification link for developer convenience
+    if (isVerified) {
+      return {
+        success: true,
+        message: "Account created successfully! You can now sign in.",
+      };
+    }
+
+    // In production with SMTP, log the verification link for developer convenience
     console.log(
-      `[DEVELOPER MODE] Verification Link: http://localhost:3000/verify-email?token=${verificationToken}`,
+      `[DEV] Verification Link: ${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify-email?token=${verificationToken}`,
     );
 
     return {
       success: true,
-      message: "Registration successful! Check console for the verification link.",
+      message: "Registration successful! Please check your email to verify your account.",
     };
   } catch (error) {
-    console.error("Registration error:", error);
+    const err = error as Error;
+    console.error("❌ Registration error name:", err?.name);
+    console.error("❌ Registration error message:", err?.message);
+    console.error("❌ Registration error stack:", err?.stack);
     return {
       success: false,
-      message: "An error occurred during registration. Please try again.",
+      message: `Registration failed: ${err?.message || "Unknown error. Check server logs."}`,
     };
   }
 }
