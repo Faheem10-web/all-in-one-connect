@@ -48,6 +48,8 @@ export async function addGalleryItem(
   }
 }
 
+import { deleteFromCloudinary } from "@/lib/cloudinary";
+
 export async function deleteGalleryItem(itemId: string) {
   try {
     const session = await auth();
@@ -56,6 +58,18 @@ export async function deleteGalleryItem(itemId: string) {
     }
 
     await connectToDatabase();
+
+    // Lookup item details first
+    const item = await GalleryItem.findById(itemId);
+    if (!item) {
+      return { success: false, message: "Gallery item not found." };
+    }
+
+    // Clean up asset in Cloudinary
+    if (item.publicId) {
+      await deleteFromCloudinary(item.publicId);
+    }
+
     await GalleryItem.findByIdAndDelete(itemId);
 
     return { success: true, message: "Item deleted successfully." };

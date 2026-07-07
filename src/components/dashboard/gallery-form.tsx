@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
-import { addGalleryItem, deleteGalleryItem } from "@/features/gallery/actions";
+import React, { useState, useTransition, useRef } from "react";
+import { deleteGalleryItem } from "@/features/gallery/actions";
+import { uploadBusinessImage } from "@/features/cloudinary/actions";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, Plus, Upload, Loader2, Image as ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -23,25 +24,50 @@ export function GalleryForm({ businessId, initialItems }: GalleryFormProps) {
   const [items, setItems] = useState<GalleryItemType[]>(initialItems);
   const [isPending, startTransition] = useTransition();
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleAddImage = () => {
-    const url = prompt("[DEMO MODE] Enter the image URL for the gallery:");
-    if (!url) return;
+  const handleTriggerUpload = () => {
+    fileInputRef.current?.click();
+  };
 
-    const title = prompt("Enter an optional title/label for the image:") || "";
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    setUploading(true);
-    startTransition(async () => {
-      const result = await addGalleryItem(businessId, url, title);
-      setUploading(false);
+    // Validate size client-side (under 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Selected file exceeds the maximum 5MB size limit.");
+      return;
+    }
 
-      if (result.success && result.data) {
-        setItems([...items, result.data]);
-        router.refresh();
-      } else {
-        alert(result.message || "Failed to add image.");
-      }
-    });
+    const title = prompt("Enter an optional label/title for this photo:") || "Gallery Image";
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setUploading(true);
+
+      startTransition(async () => {
+        const result = await uploadBusinessImage(businessId, base64, "gallery", title);
+        setUploading(false);
+
+        if (result.success && result.data) {
+          setItems([
+            ...items,
+            {
+              _id: result.data.itemId || "",
+              imageUrl: result.data.secureUrl,
+              title,
+              order: items.length,
+            },
+          ]);
+          router.refresh();
+        } else {
+          alert(result.message || "Failed to upload image to gallery.");
+        }
+      });
+    };
   };
 
   const handleDeleteImage = (id: string) => {
@@ -60,12 +86,21 @@ export function GalleryForm({ businessId, initialItems }: GalleryFormProps) {
 
   return (
     <div className="space-y-6">
+      {/* Hidden file input picker */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/png, image/jpeg, image/jpg, image/webp"
+        className="hidden"
+      />
+
       <div className="p-6 bg-card border border-border rounded-xl shadow-xs space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-foreground">Photo Gallery</h2>
           <button
             type="button"
-            onClick={handleAddImage}
+            onClick={handleTriggerUpload}
             disabled={isPending || uploading}
             className="flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-transparent text-foreground hover:bg-secondary text-xs font-semibold cursor-pointer disabled:opacity-50"
           >
@@ -88,7 +123,7 @@ export function GalleryForm({ businessId, initialItems }: GalleryFormProps) {
               </p>
             </div>
             <button
-              onClick={handleAddImage}
+              onClick={handleTriggerUpload}
               className="h-8 px-4 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
             >
               Upload First Photo

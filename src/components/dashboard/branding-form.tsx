@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useTransition, useState } from "react";
+import React, { useTransition, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Upload, Trash2, Eye } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { uploadBusinessImage } from "@/features/cloudinary/actions";
 
 interface BrandingFormProps {
   businessId: string;
@@ -34,6 +35,10 @@ export function BrandingForm({ businessId, logoUrl, coverUrl, branding }: Brandi
   // Image links states
   const [logo, setLogo] = useState(logoUrl || "");
   const [cover, setCover] = useState(coverUrl || "");
+
+  const [uploadTarget, setUploadTarget] = useState<"logo" | "cover" | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
     startTransition(async () => {
@@ -70,17 +75,45 @@ export function BrandingForm({ businessId, logoUrl, coverUrl, branding }: Brandi
     });
   };
 
-  // Simulated asset upload triggers
-  const simulateUpload = (type: "LOGO" | "COVER") => {
-    const url = prompt(
-      `[DEMO MODE] Enter the URL of the ${type === "LOGO" ? "logo" : "cover"} image:`,
-    );
-    if (url === null) return; // Canceled
-    if (type === "LOGO") {
-      setLogo(url);
-    } else {
-      setCover(url);
+  const handleTriggerUpload = (target: "logo" | "cover") => {
+    setUploadTarget(target);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !uploadTarget) return;
+
+    // Validate size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Selected image exceeds 5MB size limit.");
+      return;
     }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setUploading(true);
+
+      startTransition(async () => {
+        const result = await uploadBusinessImage(businessId, base64, uploadTarget);
+        setUploading(false);
+
+        if (result.success && result.data) {
+          if (uploadTarget === "logo") {
+            setLogo(result.data.secureUrl);
+          } else {
+            setCover(result.data.secureUrl);
+          }
+          alert(
+            `${uploadTarget === "logo" ? "Logo" : "Cover"} uploaded successfully! Click save to apply changes.`,
+          );
+        } else {
+          alert(result.message || "Failed to upload image.");
+        }
+      });
+    };
   };
 
   return (
@@ -173,6 +206,16 @@ export function BrandingForm({ businessId, logoUrl, coverUrl, branding }: Brandi
         {/* Media Asset Upload Areas */}
         <div className="p-6 bg-card border border-border rounded-xl shadow-xs space-y-4">
           <h2 className="text-lg font-bold text-foreground">Media Assets</h2>
+
+          {/* Hidden file input picker */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/png, image/jpeg, image/jpg, image/webp"
+            className="hidden"
+          />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Logo upload slot */}
             <div className="space-y-2">
@@ -199,11 +242,18 @@ export function BrandingForm({ businessId, logoUrl, coverUrl, branding }: Brandi
                 ) : (
                   <button
                     type="button"
-                    onClick={() => simulateUpload("LOGO")}
-                    className="flex flex-col items-center justify-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer"
+                    onClick={() => handleTriggerUpload("logo")}
+                    disabled={uploading}
+                    className="flex flex-col items-center justify-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer disabled:opacity-50"
                   >
-                    <Upload className="w-6 h-6 text-muted-foreground" />
-                    <span>Upload Logo</span>
+                    {uploading && uploadTarget === "logo" ? (
+                      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                    ) : (
+                      <Upload className="w-6 h-6 text-muted-foreground" />
+                    )}
+                    <span>
+                      {uploading && uploadTarget === "logo" ? "Uploading..." : "Upload Logo"}
+                    </span>
                   </button>
                 )}
               </div>
@@ -234,11 +284,18 @@ export function BrandingForm({ businessId, logoUrl, coverUrl, branding }: Brandi
                 ) : (
                   <button
                     type="button"
-                    onClick={() => simulateUpload("COVER")}
-                    className="flex flex-col items-center justify-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer"
+                    onClick={() => handleTriggerUpload("cover")}
+                    disabled={uploading}
+                    className="flex flex-col items-center justify-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer disabled:opacity-50"
                   >
-                    <Upload className="w-6 h-6 text-muted-foreground" />
-                    <span>Upload Cover</span>
+                    {uploading && uploadTarget === "cover" ? (
+                      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                    ) : (
+                      <Upload className="w-6 h-6 text-muted-foreground" />
+                    )}
+                    <span>
+                      {uploading && uploadTarget === "cover" ? "Uploading..." : "Upload Cover"}
+                    </span>
                   </button>
                 )}
               </div>

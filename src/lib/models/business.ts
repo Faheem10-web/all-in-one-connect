@@ -22,7 +22,9 @@ export interface IBusiness extends Document {
   tagline?: string;
   description?: string;
   logoUrl?: string;
+  logoPublicId?: string;
   coverUrl?: string;
+  coverPublicId?: string;
   address?: string;
   phone?: string;
   email?: string;
@@ -60,7 +62,9 @@ const BusinessSchema = new Schema<IBusiness>(
     tagline: { type: String, trim: true },
     description: { type: String, trim: true },
     logoUrl: { type: String },
+    logoPublicId: { type: String },
     coverUrl: { type: String },
+    coverPublicId: { type: String },
     address: { type: String, trim: true },
     phone: { type: String, trim: true },
     email: { type: String, trim: true, lowercase: true },
