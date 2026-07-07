@@ -1,6 +1,3 @@
-import { render, screen } from "@testing-library/react";
-import React from "react";
-
 // Mock operational hours calculator logic for tests
 function calculateIsOpen(
   hours: Array<{ day: string; open: string; close: string; closed: boolean }>,

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useTransition } from "react";
-import { Download, FileBarChart2, FileSpreadsheet, Loader2 } from "lucide-react";
+import { Download, FileSpreadsheet, Loader2 } from "lucide-react";
 
 interface AdminReportsViewProps {
   users: Array<{ email: string; role: string; isSuspended: boolean; createdAt: string }>;

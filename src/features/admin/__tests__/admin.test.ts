@@ -1,5 +1,3 @@
-import React from "react";
-
 // Mock validation logic for dashboard access limits
 function checkHasAdminAccess(role: string | undefined): boolean {
   return role === "SUPER_ADMIN";

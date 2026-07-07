@@ -3,7 +3,7 @@
 import React, { useState, useTransition } from "react";
 import { updateUserStatus, updateUserRole, deleteUser } from "@/features/admin/actions";
 import { useRouter } from "next/navigation";
-import { Search, Loader2, ShieldCheck, ShieldAlert, UserX, UserCheck, Trash2 } from "lucide-react";
+import { Search, ShieldAlert, UserX, UserCheck, Trash2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 import { UserRole } from "@/lib/models/user";

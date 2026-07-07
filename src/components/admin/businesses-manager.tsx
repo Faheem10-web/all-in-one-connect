@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Loader2, CheckCircle2, AlertTriangle, UserX, ExternalLink } from "lucide-react";
+import { Search, CheckCircle2, AlertTriangle, UserX, ExternalLink } from "lucide-react";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
 

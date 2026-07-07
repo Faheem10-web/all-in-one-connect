@@ -15,7 +15,7 @@ const timeAgo = (dateStr: string) => {
     if (hours < 24) return `${hours}h ago`;
     const days = Math.floor(hours / 24);
     return `${days}d ago`;
-  } catch (e) {
+  } catch {
     return "Recently";
   }
 };
@@ -41,9 +41,6 @@ export function AnalyticsDashboard({
   countries,
   recentScans,
 }: AnalyticsDashboardProps) {
-  // Calculate total counts
-  const totalScans = recentScans.length;
-
   return (
     <div className="space-y-6">
       {/* 3-Column Charts Breakdown */}

@@ -4,7 +4,7 @@ import React, { useState, useTransition, useRef } from "react";
 import { deleteGalleryItem } from "@/features/gallery/actions";
 import { uploadBusinessImage } from "@/features/cloudinary/actions";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Plus, Upload, Loader2, Image as ImageIcon } from "lucide-react";
+import { Trash2, Plus, Loader2, Image as ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface GalleryItemType {

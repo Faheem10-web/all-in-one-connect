@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useTransition } from "react";
-import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
-import { Loader2, ShieldCheck, Mail, ShieldAlert } from "lucide-react";
+import { Loader2, ShieldCheck, Mail } from "lucide-react";
 
 export function SettingsForm() {
   const { data: session } = useSession();
@@ -14,7 +13,7 @@ export function SettingsForm() {
 
     startTransition(async () => {
       try {
-        const response = await fetch("/api/auth/forgot-password", {
+        await fetch("/api/auth/forgot-password", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

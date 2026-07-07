@@ -3,7 +3,7 @@
 import React, { useTransition, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Upload, Trash2, Eye } from "lucide-react";
-import { cn } from "@/utils/cn";
+
 import { uploadBusinessImage } from "@/features/cloudinary/actions";
 
 interface BrandingFormProps {
@@ -28,7 +28,7 @@ export function BrandingForm({ businessId, logoUrl, coverUrl, branding }: Brandi
   // State bindings for visual preview
   const [primaryColor, setPrimaryColor] = useState(branding.primaryColor);
   const [textColor, setTextColor] = useState(branding.textColor);
-  const [theme, setTheme] = useState(branding.theme);
+  const [theme] = useState(branding.theme);
   const [buttonRadius, setButtonRadius] = useState(branding.buttonRadius);
   const [fontFamily, setFontFamily] = useState(branding.fontFamily);
 

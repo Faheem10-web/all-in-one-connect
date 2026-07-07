@@ -12,7 +12,6 @@ import {
   FileBarChart2,
   Menu,
   X,
-  Bell,
   LogOut,
   ChevronLeft,
   ChevronRight,

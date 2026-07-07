@@ -5,7 +5,6 @@ import Sidebar from "../shared/sidebar";
 import Header from "../shared/header";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Building2,
@@ -14,9 +13,6 @@ import {
   Image as ImageIcon,
   QrCode,
   BarChart3,
-  Bell,
-  Settings,
-  History,
   X,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -34,7 +30,6 @@ const mobileItems = [
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground">

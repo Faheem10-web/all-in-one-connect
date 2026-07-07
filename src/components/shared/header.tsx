@@ -4,9 +4,8 @@ import React, { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, User, Menu, Bell, Search, ShieldAlert, Laptop, Moon, Sun } from "lucide-react";
+import { LogOut, User, Menu, Bell, Search, ShieldAlert } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/utils/cn";
 
 interface HeaderProps {
   onMobileMenuToggle: () => void;

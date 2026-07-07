@@ -3,7 +3,7 @@
 import React, { useTransition, useState } from "react";
 import { markAsRead, deleteNotification } from "@/features/notifications/actions";
 import { useRouter } from "next/navigation";
-import { Bell, Check, Trash2, Loader2 } from "lucide-react";
+import { Bell, Check, Trash2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 interface NotificationItem {
@@ -21,7 +21,7 @@ interface NotificationsListProps {
 
 export function NotificationsList({ notifications: initialNotifications }: NotificationsListProps) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [list, setList] = useState(initialNotifications);
 
   const handleMarkRead = (id: string) => {

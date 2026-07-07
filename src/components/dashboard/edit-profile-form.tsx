@@ -45,7 +45,6 @@ export function EditProfileForm({ business }: EditProfileFormProps) {
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors },
   } = useForm<FormValues>({

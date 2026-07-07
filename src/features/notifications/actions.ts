@@ -2,7 +2,6 @@
 
 import { connectToDatabase } from "@/lib/db";
 import Notification from "@/lib/models/notification";
-import mongoose from "mongoose";
 import { auth } from "@/auth";
 
 export async function markAsRead(notificationId: string) {
