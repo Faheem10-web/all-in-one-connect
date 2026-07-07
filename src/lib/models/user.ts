@@ -7,6 +7,7 @@ export interface IUser extends Document {
   passwordHash?: string;
   role: UserRole;
   isVerified: boolean;
+  isSuspended: boolean;
   verificationToken?: string | null;
   resetPasswordToken?: string | null;
   resetPasswordExpires?: Date | null;
@@ -34,6 +35,10 @@ const UserSchema: Schema<IUser> = new Schema(
       default: "BUSINESS_OWNER",
     },
     isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isSuspended: {
       type: Boolean,
       default: false,
     },
