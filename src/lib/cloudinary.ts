@@ -1,13 +1,16 @@
 import { v2 as cloudinary } from "cloudinary";
-import { env } from "@/config/env";
 
-// Configure Cloudinary SDK credentials
-cloudinary.config({
-  cloud_name: env.CLOUDINARY_CLOUD_NAME,
-  api_key: env.CLOUDINARY_API_KEY,
-  api_secret: env.CLOUDINARY_API_SECRET,
-  secure: true,
-});
+// Lazily configure Cloudinary SDK credentials at runtime (not at module load time)
+// to avoid build-time placeholder values being baked in.
+function getConfiguredCloudinary() {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
+  });
+  return cloudinary;
+}
 
 export { cloudinary };
 
@@ -25,7 +28,8 @@ export async function uploadToCloudinary(
   folderPath: string,
 ): Promise<UploadResult> {
   try {
-    const result = await cloudinary.uploader.upload(fileDataUri, {
+    const sdk = getConfiguredCloudinary();
+    const result = await sdk.uploader.upload(fileDataUri, {
       folder: folderPath,
       resource_type: "image",
       fetch_format: "webp",
@@ -47,7 +51,8 @@ export async function uploadToCloudinary(
  */
 export async function deleteFromCloudinary(publicId: string): Promise<boolean> {
   try {
-    const result = await cloudinary.uploader.destroy(publicId);
+    const sdk = getConfiguredCloudinary();
+    const result = await sdk.uploader.destroy(publicId);
     return result.result === "ok";
   } catch (error) {
     console.error("Cloudinary destruction action failed:", error);
